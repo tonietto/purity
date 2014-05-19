@@ -75,13 +75,13 @@ prompt purity
 
 ## Options
 
-### `PURity_CMD_MAX_EXEC_TIME`
+### `PURITY_CMD_MAX_EXEC_TIME`
 
 The max execution time of a process before its run time is shown when it exits. Defaults to `5` seconds.
 
-### `PURity_GIT_PULL`
+### `PURITY_GIT_PULL`
 
-Set `PURity_GIT_PULL=0` to prevent Purity from checking whether the current Git remote has been updated.
+Set `PURITY_GIT_PULL=0` to prevent Purity from checking whether the current Git remote has been updated.
 
 ## Example
 
@@ -91,7 +91,7 @@ Set `PURity_GIT_PULL=0` to prevent Purity from checking whether the current Git 
 autoload -U promptinit && promptinit
 
 # optionally define some options
-PURity_CMD_MAX_EXEC_TIME=10
+PURITY_CMD_MAX_EXEC_TIME=10
 
 prompt purity
 ```
