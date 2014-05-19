@@ -25,20 +25,11 @@ prompt_pure_human_time() {
 	local hours=$(( tmp / 60 / 60 % 24 ))
 	local minutes=$(( tmp / 60 % 60 ))
 	local seconds=$(( tmp % 60 ))
+	echo -n "⌚︎ "
 	(( $days > 0 )) && echo -n "${days}d "
 	(( $hours > 0 )) && echo -n "${hours}h "
 	(( $minutes > 0 )) && echo -n "${minutes}m "
 	echo "${seconds}s"
-}
-
-# fastest possible way to check if repo is dirty
-prompt_pure_git_dirty() {
-	# check if we're in a git repo
-	command git rev-parse --is-inside-work-tree &>/dev/null || return
-	# check if it's dirty
-	command git diff --quiet --ignore-submodules HEAD &>/dev/null
-
-	(($? == 1)) && echo '*'
 }
 
 # displays the exec time of the last command if set threshold was exceeded
@@ -67,11 +58,8 @@ prompt_pure_precmd() {
 	# shows the full path in the title
 	print -Pn '\e]0;%~\a'
 
-	# git info
-	vcs_info
-
-	local prompt_pure_preprompt='\n%F{blue}%~%F{242}$vcs_info_msg_0_`prompt_pure_git_dirty` $prompt_pure_username%f %F{yellow}`prompt_pure_cmd_exec_time`%f'
-	print -P $prompt_pure_preprompt
+	local prompt_pure_preprompt="%c$(git_prompt_info) $(git_prompt_status)"
+	print -P ' %F{yellow}`prompt_pure_cmd_exec_time`%f'
 
 	# check async if there is anything to pull
 	(( ${PURE_GIT_PULL:-1} )) && {
@@ -83,7 +71,7 @@ prompt_pure_precmd() {
 		command git rev-parse --abbrev-ref @'{u}' &>/dev/null &&
 		(( $(command git rev-list --right-only --count HEAD...@'{u}' 2>/dev/null) > 0 )) &&
 		# some crazy ansi magic to inject the symbol into the previous line
-		print -Pn "\e7\e[A\e[1G\e[`prompt_pure_string_length $prompt_pure_preprompt`C%F{cyan}⇣%f\e8"
+		print -Pn "\e7\e[0G\e[`prompt_pure_string_length $prompt_pure_preprompt`C%F{cyan}⇣%f\e8"
 	} &!
 
 	# reset value since `preexec` isn't always triggered
@@ -105,15 +93,24 @@ prompt_pure_setup() {
 	add-zsh-hook precmd prompt_pure_precmd
 	add-zsh-hook preexec prompt_pure_preexec
 
-	zstyle ':vcs_info:*' enable git
-	zstyle ':vcs_info:git*' formats ' %b'
-	zstyle ':vcs_info:git*' actionformats ' %b|%a'
-
 	# show username@host if logged in through SSH
 	[[ "$SSH_CONNECTION" != '' ]] && prompt_pure_username='%n@%m '
 
+	ZSH_THEME_GIT_PROMPT_PREFIX=" %{$fg[blue]%}git%{$reset_color%}:%{$fg[red]%}"
+	ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
+	ZSH_THEME_GIT_PROMPT_DIRTY=""
+	ZSH_THEME_GIT_PROMPT_CLEAN=""
+
+	ZSH_THEME_GIT_PROMPT_ADDED="%{$fg[green]%}✓ "
+	ZSH_THEME_GIT_PROMPT_MODIFIED="%{$fg[blue]%}✶ "
+	ZSH_THEME_GIT_PROMPT_DELETED="%{$fg[red]%}✗ "
+	ZSH_THEME_GIT_PROMPT_RENAMED="%{$fg[magenta]%}➜ "
+	ZSH_THEME_GIT_PROMPT_UNMERGED="%{$fg[yellow]%}═ "
+	ZSH_THEME_GIT_PROMPT_UNTRACKED="%{$fg[cyan]%}✩ "
+
 	# prompt turns red if the previous command didn't exit with 0
-	PROMPT='%(?.%F{magenta}.%F{red})❯%f '
+	PROMPT='%F{cyan}%c$(git_prompt_info) $(git_prompt_status) %(?.%F{green}.%F{red})❯%f '
+	RPROMPT='%F{red}%(?..⏎)%f'
 }
 
 prompt_pure_setup "$@"
