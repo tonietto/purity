@@ -1,6 +1,6 @@
-# Pure
-# by Sindre Sorhus
-# https://github.com/sindresorhus/pure
+# Purity
+# by Kevin Lanni
+# https://github.com/therealklanni/purity
 # MIT License
 
 # For my own and others sanity
@@ -19,7 +19,7 @@
 
 # turns seconds into human readable time
 # 165392 => 1d 21h 56m 32s
-prompt_pure_human_time() {
+prompt_purity_human_time() {
 	local tmp=$1
 	local days=$(( tmp / 60 / 60 / 24 ))
 	local hours=$(( tmp / 60 / 60 % 24 ))
@@ -33,14 +33,14 @@ prompt_pure_human_time() {
 }
 
 # displays the exec time of the last command if set threshold was exceeded
-prompt_pure_cmd_exec_time() {
+prompt_purity_cmd_exec_time() {
 	local stop=$EPOCHSECONDS
 	local start=${cmd_timestamp:-$stop}
 	integer elapsed=$stop-$start
-	(($elapsed > ${PURE_CMD_MAX_EXEC_TIME:=5})) && prompt_pure_human_time $elapsed
+	(($elapsed > ${PURITY_CMD_MAX_EXEC_TIME:=5})) && prompt_purity_human_time $elapsed
 }
 
-prompt_pure_preexec() {
+prompt_purity_preexec() {
 	cmd_timestamp=$EPOCHSECONDS
 
 	# shows the current dir and executed command in the title when a process is active
@@ -50,19 +50,19 @@ prompt_pure_preexec() {
 }
 
 # string length ignoring ansi escapes
-prompt_pure_string_length() {
+prompt_purity_string_length() {
 	echo ${#${(S%%)1//(\%([KF1]|)\{*\}|\%[Bbkf])}}
 }
 
-prompt_pure_precmd() {
+prompt_purity_precmd() {
 	# shows the full path in the title
 	print -Pn '\e]0;%~\a'
 
-	local prompt_pure_preprompt="%c$(git_prompt_info) $(git_prompt_status)"
-	print -P ' %F{yellow}`prompt_pure_cmd_exec_time`%f'
+	local prompt_purity_preprompt="%c$(git_prompt_info) $(git_prompt_status)"
+	print -P ' %F{yellow}`prompt_purity_cmd_exec_time`%f'
 
 	# check async if there is anything to pull
-	(( ${PURE_GIT_PULL:-1} )) && {
+	(( ${PURITY_GIT_PULL:-1} )) && {
 		# check if we're in a git repo
 		command git rev-parse --is-inside-work-tree &>/dev/null &&
 		# check check if there is anything to pull
@@ -71,7 +71,7 @@ prompt_pure_precmd() {
 		command git rev-parse --abbrev-ref @'{u}' &>/dev/null &&
 		(( $(command git rev-list --right-only --count HEAD...@'{u}' 2>/dev/null) > 0 )) &&
 		# some crazy ansi magic to inject the symbol into the previous line
-		print -Pn "\e7\e[0G\e[`prompt_pure_string_length $prompt_pure_preprompt`C%F{cyan}⇣%f\e8"
+		print -Pn "\e7\e[0G\e[`prompt_purity_string_length $prompt_purity_preprompt`C%F{cyan}⇣%f\e8"
 	} &!
 
 	# reset value since `preexec` isn't always triggered
@@ -79,7 +79,7 @@ prompt_pure_precmd() {
 }
 
 
-prompt_pure_setup() {
+prompt_purity_setup() {
 	# prevent percentage showing up
 	# if output doesn't end with a newline
 	export PROMPT_EOL_MARK=''
@@ -90,11 +90,11 @@ prompt_pure_setup() {
 	autoload -Uz add-zsh-hook
 	autoload -Uz vcs_info
 
-	add-zsh-hook precmd prompt_pure_precmd
-	add-zsh-hook preexec prompt_pure_preexec
+	add-zsh-hook precmd prompt_purity_precmd
+	add-zsh-hook preexec prompt_purity_preexec
 
 	# show username@host if logged in through SSH
-	[[ "$SSH_CONNECTION" != '' ]] && prompt_pure_username='%n@%m '
+	[[ "$SSH_CONNECTION" != '' ]] && prompt_purity_username='%n@%m '
 
 	ZSH_THEME_GIT_PROMPT_PREFIX=" %{$fg[blue]%}git%{$reset_color%}:%{$fg[red]%}"
 	ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
@@ -113,4 +113,4 @@ prompt_pure_setup() {
 	RPROMPT='%F{red}%(?..⏎)%f'
 }
 
-prompt_pure_setup "$@"
+prompt_purity_setup "$@"
