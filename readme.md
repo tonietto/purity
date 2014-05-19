@@ -3,7 +3,7 @@
 > Pretty, minimal and fast ZSH prompt
 
 ![screenshot](screenshot.png)
-
+> Git status indicators will appear before the prompt terminator, view the source for details
 
 ## Overview
 
