@@ -96,7 +96,7 @@ prompt_purity_setup() {
 	# show username@host if logged in through SSH
 	[[ "$SSH_CONNECTION" != '' ]] && prompt_purity_username='%n@%m '
 
-	ZSH_THEME_GIT_PROMPT_PREFIX=" %{$fg[blue]%}git%{$reset_color%}:%{$fg[red]%}"
+	ZSH_THEME_GIT_PROMPT_PREFIX=" %{$fg[cyan]%}git%{$reset_color%}:%{$fg[yellow]%}"
 	ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
 	ZSH_THEME_GIT_PROMPT_DIRTY=""
 	ZSH_THEME_GIT_PROMPT_CLEAN=""
@@ -109,7 +109,7 @@ prompt_purity_setup() {
 	ZSH_THEME_GIT_PROMPT_UNTRACKED="%{$fg[cyan]%}✩ "
 
 	# prompt turns red if the previous command didn't exit with 0
-	PROMPT='%F{cyan}%c$(git_prompt_info) $(git_prompt_status) %(?.%F{green}.%F{red})❯%f '
+	PROMPT='%F{blue}%c$(git_prompt_info) $(git_prompt_status) %(?.%F{green}.%F{red})❯%f '
 	RPROMPT='%F{red}%(?..⏎)%f'
 }
 
