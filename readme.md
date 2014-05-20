@@ -2,7 +2,7 @@
 
 > Pretty, minimal and fast ZSH prompt
 
-![screenshot](screenshot.png)
+![screenshot](https://raw.githubusercontent.com/therealklanni/purity/master/screenshot.png)
 > Git status indicators will appear before the prompt terminator, view the source for details
 
 ## Overview
