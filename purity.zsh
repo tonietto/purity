@@ -96,17 +96,17 @@ prompt_purity_setup() {
 	# show username@host if logged in through SSH
 	[[ "$SSH_CONNECTION" != '' ]] && prompt_purity_username='%n@%m '
 
-	ZSH_THEME_GIT_PROMPT_PREFIX=" %{$fg[cyan]%}git%{$reset_color%}:%{$fg[yellow]%}"
-	ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
+	ZSH_THEME_GIT_PROMPT_PREFIX=" %F{cyan}git:%f%F{yellow}"
+	ZSH_THEME_GIT_PROMPT_SUFFIX="%b"
 	ZSH_THEME_GIT_PROMPT_DIRTY=""
 	ZSH_THEME_GIT_PROMPT_CLEAN=""
 
-	ZSH_THEME_GIT_PROMPT_ADDED="%{$fg[green]%}✓ "
-	ZSH_THEME_GIT_PROMPT_MODIFIED="%{$fg[blue]%}✶ "
-	ZSH_THEME_GIT_PROMPT_DELETED="%{$fg[red]%}✗ "
-	ZSH_THEME_GIT_PROMPT_RENAMED="%{$fg[magenta]%}➜ "
-	ZSH_THEME_GIT_PROMPT_UNMERGED="%{$fg[yellow]%}═ "
-	ZSH_THEME_GIT_PROMPT_UNTRACKED="%{$fg[cyan]%}✩ "
+	ZSH_THEME_GIT_PROMPT_ADDED="%F{green}✓%f "
+	ZSH_THEME_GIT_PROMPT_MODIFIED="%F{blue}✶%f "
+	ZSH_THEME_GIT_PROMPT_DELETED="%F{red}✗%f "
+	ZSH_THEME_GIT_PROMPT_RENAMED="%F{magenta}➜%f "
+	ZSH_THEME_GIT_PROMPT_UNMERGED="%F{yellow}═%f "
+	ZSH_THEME_GIT_PROMPT_UNTRACKED="%F{cyan}✩%f "
 
 	# prompt turns red if the previous command didn't exit with 0
 	PROMPT='%F{blue}%c$(git_prompt_info) $(git_prompt_status) %(?.%F{green}.%F{red})❯%f '
