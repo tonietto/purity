@@ -71,13 +71,20 @@ prompt_purity_precmd() {
 		command git rev-parse --abbrev-ref @'{u}' &>/dev/null &&
 		(( $(command git rev-list --right-only --count HEAD...@'{u}' 2>/dev/null) > 0 )) &&
 		# some crazy ansi magic to inject the symbol into the previous line
-		print -Pn "\e7\e[0G\e[`prompt_purity_string_length $prompt_purity_preprompt`C%F{cyan}⇣%f\e8"
+		print -Pn "\e7\e[0G\e[$prompt_purity_prepromptC%F{cyan}⇣%f\e8"
 	} &!
 
 	# reset value since `preexec` isn't always triggered
 	unset cmd_timestamp
 }
 
+### From agnoster
+# Context: user@hostname (who am I and where am I)
+prompt_context() {
+  if [[ "$USER" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
+    echo "%(!.%{%F{yellow}%}.)$USER@%m"
+  fi
+}
 
 prompt_purity_setup() {
 	# prevent percentage showing up
@@ -91,13 +98,14 @@ prompt_purity_setup() {
 	autoload -Uz vcs_info
 
 	add-zsh-hook precmd prompt_purity_precmd
+	add-zsh-hook precmd prompt_context
 	add-zsh-hook preexec prompt_purity_preexec
 
 	# show username@host if logged in through SSH
 	[[ "$SSH_CONNECTION" != '' ]] && prompt_purity_username='%n@%m '
 
-	ZSH_THEME_GIT_PROMPT_PREFIX=" %F{cyan}git:%f%F{yellow}"
-	ZSH_THEME_GIT_PROMPT_SUFFIX="%b"
+	ZSH_THEME_GIT_PROMPT_PREFIX=" %F{cyan}(%f%F{yellow}"
+	ZSH_THEME_GIT_PROMPT_SUFFIX="%F{cyan})%b"
 	ZSH_THEME_GIT_PROMPT_DIRTY=""
 	ZSH_THEME_GIT_PROMPT_CLEAN=""
 
@@ -109,7 +117,7 @@ prompt_purity_setup() {
 	ZSH_THEME_GIT_PROMPT_UNTRACKED="%F{cyan}✩%f "
 
 	# prompt turns red if the previous command didn't exit with 0
-	PROMPT='%F{blue}%c$(git_prompt_info) $(git_prompt_status) %(?.%F{green}.%F{red})❯%f '
+	PROMPT='%(?.%F{green}.%F{red})→ %F{blue}%c$(git_prompt_info) $(git_prompt_status)%f'
 	RPROMPT='%F{red}%(?..⏎)%f'
 }
 
