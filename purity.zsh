@@ -78,14 +78,6 @@ prompt_purity_precmd() {
 	unset cmd_timestamp
 }
 
-### From agnoster
-# Context: user@hostname (who am I and where am I)
-prompt_context() {
-  if [[ "$USER" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
-    echo "%(!.%{%F{yellow}%}.)$USER@%m"
-  fi
-}
-
 prompt_purity_setup() {
 	# prevent percentage showing up
 	# if output doesn't end with a newline
@@ -98,7 +90,6 @@ prompt_purity_setup() {
 	autoload -Uz vcs_info
 
 	add-zsh-hook precmd prompt_purity_precmd
-	add-zsh-hook precmd prompt_context
 	add-zsh-hook preexec prompt_purity_preexec
 
 	# show username@host if logged in through SSH
